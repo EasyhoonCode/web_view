@@ -8,6 +8,8 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
+
+##NOTE:学生信息业务接口
 #根目录
 @app.get("/")
 async def root():
@@ -20,7 +22,7 @@ def read_students(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
     return students
 
 # 根据班级查询学生信息
-@app.get("/students/{classname}")
+@app.get("/students/by_classname")
 def read_students_by_classname(classname: str, db: Session = Depends(get_db)):
     students = db.query(Student).filter(Student.classname == classname).all()
     if not students:
@@ -29,7 +31,7 @@ def read_students_by_classname(classname: str, db: Session = Depends(get_db)):
 
 
 # 更新学生信息
-@app.put("/students/{student_id}")
+@app.put("/students/id/{student_id}")
 async def update_student(student_id: int, student_update: StudentUpdate, db: Session = Depends(get_db)):
     # 查询指定 ID 的学生记录
     student = db.query(Student).filter(Student.id == student_id).first()
@@ -46,7 +48,7 @@ async def update_student(student_id: int, student_update: StudentUpdate, db: Ses
     return {"msg": "学生信息已更新"}
 
 # 删除学生信息
-@app.delete("/students/{student_id}")
+@app.delete("/students/delete/{student_id}")
 async def delete_student(student_id: int, db: Session = Depends(get_db)):
     # 查询指定 ID 的学生记录
     student = db.query(Student).filter(Student.id == student_id).first()
@@ -62,7 +64,7 @@ async def delete_student(student_id: int, db: Session = Depends(get_db)):
     return {"msg": "学生信息已删除"}
 
 # 添加学生信息
-@app.post("/students")
+@app.post("/students/add_students")
 async def create_student(student: StudentCreate, db: Session = Depends(get_db)):
     # 创建学生记录
     db_student = Student(**student.dict())
@@ -73,8 +75,8 @@ async def create_student(student: StudentCreate, db: Session = Depends(get_db)):
     return {"msg": "学生信息添加成功", "data": db_student}
 
 
-# 查询某个学生信息的接口函数
-@app.get("/students/{student_id}")
+# 查询某个学生信息
+@app.get("/students/SearchID/{student_id}")
 def read_student(student_id: int, db: Session = Depends(get_db)):
     student = db.query(Student).filter(Student.id == student_id).first()
     if not student:
@@ -82,7 +84,15 @@ def read_student(student_id: int, db: Session = Depends(get_db)):
     return student
 
 
+# 列出所有班级信息接口
+@app.get("/classnames")
+async def get_classnames(db: Session = Depends(get_db)):
+    # 使用 distinct() 函数去重获取所有班级名
+    classnames = db.query(Student.classname).distinct().all()
+    return {"classnames": [classname[0] for classname in classnames]}
 
+
+##NOTE:登录与注册业务接口
 @app.post("/signin")
 def signin(user:SignIn, db: Session = Depends(get_db)):
     # 检查用户名是否已经存在

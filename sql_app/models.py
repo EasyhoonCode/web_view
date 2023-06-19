@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float
 from database import Base
 from pydantic import BaseModel
-
 class Student(Base):
     __tablename__ = "students"
 
@@ -12,6 +11,9 @@ class Student(Base):
     course_a = Column(Integer, nullable=False)
     course_b = Column(Integer, nullable=False)
     course_c = Column(Integer, nullable=False)
+    average_score = Column(Float, nullable=False)
+    max_score = Column(Integer, nullable=False)
+    min_score = Column(Integer, nullable=False)
 
 class StudentUpdate(BaseModel):
     name: str = None
@@ -20,6 +22,9 @@ class StudentUpdate(BaseModel):
     course_a: int = None
     course_b: int = None
     course_c: int = None
+    average_score :float = None
+    max_score : int = None
+    min_score : int = None
 
     class Config:
         orm_mode = True
@@ -31,6 +36,9 @@ class StudentCreate(BaseModel):
     course_a: int
     course_b: int
     course_c: int
+    average_score : float
+    max_score : int
+    min_score : int
 
     class Config:
         orm_mode = True
