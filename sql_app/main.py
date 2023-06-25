@@ -5,6 +5,7 @@ from database import get_db,User
 from models import Student, StudentUpdate,StudentCreate,UserIn,SignIn
 from fastapi.responses import JSONResponse
 # from database import SessionLocal, engine
+import uvicorn
 
 app = FastAPI()
 
@@ -130,3 +131,6 @@ def login(user: UserIn, db: Session = Depends(get_db)):
 
     return {"msg": "登录成功", "data": existing_user}
 
+if __name__ == '__main__':
+    # 运行fastapi程序
+    uvicorn.run(app="main:app", host="127.0.0.1", port=8000, reload=True)
